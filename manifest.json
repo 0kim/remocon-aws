@@ -1,0 +1,49 @@
+{
+  "manifest_version": 2,
+
+  "name": "Remocon for AWS",
+  "version": "0.1",
+  "default_locale": "ko",
+
+  "description": "Easily switch pages of AWS services and region.",
+
+  "browser_action": 
+  {
+    "default_popup": "popup.html",
+    "default_title": "Remocon for AWS"
+  },
+
+  "icons": {
+    "16": "assets/icon16.png",
+    "48": "assets/icon48.png",
+    "128": "assets/icon128.png" },
+
+  "content_scripts": [
+    {
+      "matches" : ["https://console.aws.amazon.com/*", "https://*.console.aws.amazon.com/*"],
+      "js": [ "js/jquery-1.11.2.js",
+              "js/contentscript.js"]
+    }
+  ],
+
+  "background": {
+    "scripts": ["js/eventPage.js"],
+    "persistent": false
+  },
+
+  "commands": {
+  },
+
+  "permissions": [
+    "tabs"
+  ],
+
+  "web_accessible_resources": ["js/remocon-aws.js"],
+
+  "externally_connectable": {
+    "matches": ["https://console.aws.amazon.com/*"]
+  },
+
+  "content_security_policy": "script-src 'self' https://ssl.google-analytics.com; object-src 'self';"
+
+}

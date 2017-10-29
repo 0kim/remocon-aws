@@ -1,0 +1,5 @@
+dist/*
+.DS_Store
+test_js/
+.idea/
+env.sh
