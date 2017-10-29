@@ -1,4 +1,4 @@
-VERSION=0.11
+VERSION=0.1
 DEPLOY_TARGET=(
     "_locales"
     "assets"
