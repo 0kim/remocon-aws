@@ -54,13 +54,13 @@ function RELEASED(key) {
 }
 
 setTimeout( function(){
-    var s = document.createElement('script');
-
-    s.src = chrome.extension.getURL('js/remopooq.js');
-    s.onload = function() {
-        this.remove();
-    };
-    (document.head || document.documentElement).appendChild(s);
+    // var s = document.createElement('script');
+    //
+    // s.src = chrome.extension.getURL('js/remocon-aws.js');
+    // s.onload = function() {
+    //     this.remove();
+    // };
+    // (document.head || document.documentElement).appendChild(s);
 }, 500)
 
 
@@ -126,6 +126,20 @@ document.addEventListener('keydown', (event) => {
         } else {
             // focus on 'Create a Resource Group'
             getElemById("awsc-rg-createResourceGroup").focus();
+        }
+    } else if ( keyCode == 65  // CTRL + A
+        && gStatus["CTRL_PRESSED"]
+        && !gStatus["ALT_PRESSED"]
+        && !gStatus["SHIFT_PRESSED"] ) {
+
+        navUsernameMenu = getElemById("nav-usernameMenu");
+        navUsernameMenu.click();
+
+        for(let n of getElemById("awsc-username-menu-optional-items").children) {
+            if(n.tagName == 'A') {
+                n.focus();
+                break;
+            }
         }
     }
 
