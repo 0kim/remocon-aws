@@ -1,146 +1,167 @@
-var gStatus = {
-    CTRL_PRESSED:  false,
-    ALT_PRESSED:   false,
-    SHIFT_PRESSED: false,
-    CMD_PRESSED:   false
-}
-
-const KEYS = {
-    "TAB": 9,
-    "SHIFT": 16,
-    "CTRL": 17,
-    "ALT": 18,
-    "LEFT": 37,
-    "UP": 38,
-    "RIGHT": 39,
-    "DOWN": 40,
-    "CMD": 91
-}
-
-// onkeydown
-function PRESSED(key) {
-    switch (key) {
-        case KEYS["CTRL"]:
-            gStatus["CTRL_PRESSED"] = true;
-            break;
-        case KEYS["ALT"]:
-            gStatus["ALT_PRESSED"] = true;
-            break;
-        case KEYS["SHIFT"]:
-            gStatus["SHIFT_PRESSED"] = true;
-            break;
-        case KEYS["CMD"]:
-            gStatus["CMD_PRESSED"] = true;
-            break;
-    }
-}
-
-// onkeyup
-function RELEASED(key) {
-    switch (key) {
-        case KEYS["CTRL"]:
-            gStatus["CTRL_PRESSED"] = false
-            break;
-        case KEYS["ALT"]:
-            gStatus["ALT_PRESSED"] = false;
-            break;
-        case KEYS["SHIFT"]:
-            gStatus["SHIFT_PRESSED"] = false;
-            break;
-        case KEYS["CMD"]:
-            gStatus["CMD_PRESSED"] = false;
-            break;
-    }
-}
-
-setTimeout( function(){
-    // var s = document.createElement('script');
-    //
-    // s.src = chrome.extension.getURL('js/remocon-aws.js');
-    // s.onload = function() {
-    //     this.remove();
-    // };
-    // (document.head || document.documentElement).appendChild(s);
-}, 500)
-
-
-document.addEventListener('keyup', (event) => {
-    var keyCode = event.keyCode;
-    RELEASED(keyCode);
-
-}, false );
-
-
 function getElemById(id) {
     return document.getElementById(id);
 }
 
+// Services Menu callback
+function clickNavServicesMenu() {
+    getElemById("nav-servicesMenu").click();
+}
 
-document.addEventListener('keydown', (event) => {
-    var keyCode = event.keyCode;
-    PRESSED(keyCode);
-
-    if ( keyCode == 83  // CTRL + S
-        && gStatus["CTRL_PRESSED"]
-        && !gStatus["ALT_PRESSED"]
-        && !gStatus["SHIFT_PRESSED"] ) {
-        getElemById("nav-servicesMenu").click();
-    } else if ( keyCode == 82  // CTRL + R
-                && gStatus["CTRL_PRESSED"]
-                && !gStatus["ALT_PRESSED"]
-                && !gStatus["SHIFT_PRESSED"] ) {
-        navRegionMenu = getElemById("nav-regionMenu");
-        navRegionMenu.click();
-        regionMenuContent = getElemById("regionMenuContent");
-        for(let node of regionMenuContent.children) {
-            if (node.tagName == 'A') {
-                node.focus();
-                break;
-            }
+// Region Menu callback
+function clickNavRegionMenu() {
+    let navRegionMenu = getElemById("nav-regionMenu");
+    navRegionMenu.click();
+    let regionMenuContent = getElemById("regionMenuContent");
+    for(let node of regionMenuContent.children) {
+        if (node.tagName == 'A') {
+            node.focus();
+            break;
         }
-    } else if ( keyCode == 71  // CTRL + G
-                && gStatus["CTRL_PRESSED"]
-                && !gStatus["ALT_PRESSED"]
-                && !gStatus["SHIFT_PRESSED"] ) {
-        let isRgExisted = false;
+    }
+}
 
-        navResourceGroupsMenu = getElemById("nav-resourceGroupsMenu");
-        navResourceGroupsMenu.click();
+// Resource Groups callback
+function clickNavResourceGroupsMenu() {
+    let isRgExisted = false;
+    let navResourceGroupsMenu = getElemById("nav-resourceGroupsMenu");
+    navResourceGroupsMenu.click();
 
-        for(let n of getElemById("awsc-rg-column-left").children) {
-            if(n.tagName == 'LI') {
-                isRgExisted = true;
-                break;
-            }
+    for(let n of getElemById("awsc-rg-column-left").children) {
+        if(n.tagName == 'LI') {
+            isRgExisted = true;
+            break;
         }
+    }
 
-        if(isRgExisted) {
-            // focus on first rg of column-left
-            //   awsc-rg-column-left >> li >> a
-            for(let n of getElemById("awsc-rg-column-left").firstChild.children) {
-                if(n.tagName == 'A') {
-                   n.focus();
-                   break;
-                }
-            }
-        } else {
-            // focus on 'Create a Resource Group'
-            getElemById("awsc-rg-createResourceGroup").focus();
-        }
-    } else if ( keyCode == 65  // CTRL + A
-        && gStatus["CTRL_PRESSED"]
-        && !gStatus["ALT_PRESSED"]
-        && !gStatus["SHIFT_PRESSED"] ) {
-
-        navUsernameMenu = getElemById("nav-usernameMenu");
-        navUsernameMenu.click();
-
-        for(let n of getElemById("awsc-username-menu-optional-items").children) {
+    if(isRgExisted) {
+        // focus on first rg of column-left
+        //   awsc-rg-column-left >> li >> a
+        for(let n of getElemById("awsc-rg-column-left").firstChild.children) {
             if(n.tagName == 'A') {
                 n.focus();
                 break;
             }
         }
+    } else {
+        // focus on 'Create a Resource Group'
+        getElemById("awsc-rg-createResourceGroup").focus();
+    }
+}
+
+// Username callback
+function clickNavUsernameMenu() {
+    let navUsernameMenu = getElemById("nav-usernameMenu");
+    navUsernameMenu.click();
+
+    for(let n of getElemById("awsc-username-menu-optional-items").children) {
+        if(n.tagName == 'A') {
+            n.focus();
+            break;
+        }
+    }
+}
+
+/////////
+// the length of MODIFIER_KEYS name must be longer than 2
+const MODIFIER_KEYS = [ "SHIFT", "CTRL", "ALT", "CMD"];
+const MODIFIER_KEYS_CODE = [16, 17, 18, 91];
+
+class Remo {
+    constructor() {
+        this.shortcutList = new Map();
+        this.modifierKeysStatus = new Map();
+        for( let i in MODIFIER_KEYS ) {
+            this.modifierKeysStatus.set(i, false);
+        }
     }
 
+    _createComboKey( shortcutKeys ) {
+        // e.g., key of 'Ctrl+S' = "0100S"
+        var comboKey;
+        let keyVal = 0;
+        let keyChar = '';
+        for(let i in shortcutKeys) {
+            if (shortcutKeys[i].length > 1) {
+                // modifier key
+                let idx = MODIFIER_KEYS.indexOf( shortcutKeys[i] );
+                keyVal += Math.pow(10,(MODIFIER_KEYS.length - idx - 1));
+            } else if ( shortcutKeys[i].length == 1 ) {
+                // normal key
+                keyChar = shortcutKeys[i];
+                // todo: check multiple keys
+            } else {
+                alert("ASSERT");
+                return;
+            }
+        }
+
+        comboKey = "0".repeat(MODIFIER_KEYS.length - String(keyVal).length)
+            .concat(keyVal, keyChar);
+
+        return comboKey
+    }
+
+    _createComboKeyWithKey( key ) {
+        let comboKey = "";
+        for( let i = 0; i < this.modifierKeysStatus.size; i++ ) {
+            if( this.modifierKeysStatus.get(String(i)) == true ) {
+                comboKey = comboKey.concat("1")
+            } else {
+                comboKey = comboKey.concat("0")
+            }
+        }
+        comboKey = comboKey.concat(String.fromCharCode(key));
+        return comboKey;
+    }
+
+    keyPressed(key) {
+        // == modifier key --> change status of modifier keys
+        let idx = MODIFIER_KEYS_CODE.indexOf(key);
+        if ( idx > -1) {
+            this.modifierKeysStatus.set(String(idx), true);
+        } else {
+            // != modifier key --> find listener and invoke relevant listener
+            // 1. create key with current status and key.
+            let comboKey = this._createComboKeyWithKey(key);
+
+            // 2. lookup listener and invoke it
+            let f = this.shortcutList.get( comboKey );
+            if (f) {
+                f(this.context);
+            }
+        }
+    }
+
+    keyReleased(key) {
+        // == modifier key --> change status of modifier keys
+        let idx = MODIFIER_KEYS_CODE.indexOf(key);
+        if ( idx > -1) {
+            this.modifierKeysStatus.set(String(idx), false);
+        } else {
+            // != modifier key --> do nothing
+        }
+    }
+
+    addShortcutListener( shortcutKeys, f) {
+        let key = this._createComboKey(shortcutKeys);
+        this.shortcutList.set( key, f )
+    }
+}
+
+////
+var remo = new Remo();
+
+remo.addShortcutListener(["ALT", "S"], clickNavServicesMenu );
+remo.addShortcutListener(["ALT", "R"], clickNavRegionMenu );
+remo.addShortcutListener(["ALT", "G"], clickNavResourceGroupsMenu );
+remo.addShortcutListener(["ALT", "A"], clickNavUsernameMenu );
+
+// Add event listeners for key down/up to Document
+document.addEventListener('keydown', (event) => {
+    remo.keyPressed(event.keyCode);
+})
+
+document.addEventListener('keyup', (event) => {
+    remo.keyReleased(event.keyCode);
 }, false );
+

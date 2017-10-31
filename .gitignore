@@ -3,3 +3,4 @@ dist/*
 test_js/
 .idea/
 env.sh
+node_modules
