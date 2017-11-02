@@ -1,10 +1,10 @@
 VERSION=0.1
 DEPLOY_TARGET=(
-    "_locales"
-    "assets"
-    "js"
-    "manifest.json"
-    "popup.html"
+    "src/_locales"
+    "src/assets"
+    "src/js"
+    "src/manifest.json"
+    "src/popup.html"
 )
 
 # Check GA_CODE (Google Analytic code)
@@ -56,5 +56,5 @@ done
 rm dist/js/*.js-e
 
 # Compress
-cd dist; zip -r remo_for_aws_$VERSION.zip ${DEPLOY_TARGET[@]}
+cd dist; zip -r remo_for_aws_$VERSION.zip *
 

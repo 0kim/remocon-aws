@@ -21,8 +21,7 @@
   "content_scripts": [
     {
       "matches" : ["https://console.aws.amazon.com/*", "https://*.console.aws.amazon.com/*"],
-      "js": [ "js/jquery-1.11.2.js",
-              "js/contentscript.js"]
+      "js": [ "js/contentscript.js"]
     }
   ],
 
@@ -41,7 +40,7 @@
   "web_accessible_resources": ["js/remocon-aws.js"],
 
   "externally_connectable": {
-    "matches": ["https://console.aws.amazon.com/*"]
+    "matches": ["https://console.aws.amazon.com/*",  "https://*.console.aws.amazon.com/*"]
   },
 
   "content_security_policy": "script-src 'self' https://ssl.google-analytics.com; object-src 'self';"
