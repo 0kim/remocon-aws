@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
 
-  "name": "Remocon for AWS",
+  "name": "Remocon for AWS Console",
   "version": "0.2",
   "default_locale": "ko",
 
@@ -10,7 +10,7 @@
   "browser_action": 
   {
     "default_popup": "popup.html",
-    "default_title": "Remocon for AWS"
+    "default_title": "Remocon for AWS Console" 
   },
 
   "icons": {
